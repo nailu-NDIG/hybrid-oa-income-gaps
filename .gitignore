@@ -1,0 +1,7 @@
+data/*
+!data/.gitkeep
+figures/
+.env
+__pycache__/
+.Rhistory
+.RData
