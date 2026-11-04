@@ -157,7 +157,7 @@ tot4 <- gap |> mutate(year = factor(year), lab = sub("-", "\u2212", sprintf("%.1
 strip4 <- setNames(ifelse(share$share_reported,
                           sprintf("%s\nidentified eligibility: %s of change",
                                   short[as.character(share$group)], percent(share$share_agreement, 1)),
-                          sprintf("%s\nwith identified eligibility %s pp, without %s pp",
+                          sprintf("%s\nwith identified eligibility %s pp,\nwithout %s pp",
                                   short[as.character(share$group)], sub("-", "\u2212", sprintf("%+.1f", 100 * share$d_gap_agreement)),
                                   sub("-", "\u2212", sprintf("%+.1f", 100 * share$d_gap_other)))),
                    share$group)
@@ -190,7 +190,7 @@ pick <- function(model, pattern, panel_lab) {
                              grepl("Low income", term) ~ "Low",
                              model == "m4" ~ "Journal listed (main)",
                              model == "m4_pub" ~ "Publisher covered",
-                             model == "m4_2022" ~ "Journal listed, 2022-2024",
+                             model == "m4_2022" ~ "Journal listed, 2022\u20132024",
                              term == "ta_journal_lead" ~ "Next-year eligibility (lead)",
                              TRUE ~ term))
 }
@@ -201,7 +201,7 @@ f6 <- bind_rows(pick("m1", "log_apc", "A. Participation: log APC × income group
                 pick("m4_2022", "ta_journal", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
                 pick("m4_lead", "ta_journal_lead", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)")) |>
   mutate(label = factor(label, rev(c("Upper-middle", "Lower-middle", "Low", "Journal listed (main)",
-                                     "Publisher covered", "Journal listed, 2022-2024",
+                                     "Publisher covered", "Journal listed, 2022\u20132024",
                                      "Next-year eligibility (lead)"))),
          ci = sprintf("%.2f (%.2f to %.2f)", estimate, conf.low, conf.high))
 cat("\nFigure 6 (coefficients, 95% CI):\n"); print(f6 |> select(panel, label, ci))
