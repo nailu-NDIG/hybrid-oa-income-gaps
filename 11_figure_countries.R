@@ -60,15 +60,15 @@ print(cty |> filter(income_group != "High income") |>
         select(iso2, income_group, articles, coverage_pct, oa_pct, ta_pct) |>
         mutate(across(ends_with("pct"), ~ round(.x, 1))), n = Inf)
 
-label_iso <- c("ZA", "TR", "CO", "MX", "CN", "IN", "BR", "IR", "EG", "ET", "UG",
-               "RU", "SG", "CL", "SA", "KR", "US", "NL", "SE", "DE", "GB", "FI", "JP", "AT")
+label_iso <- c("ZA", "TR", "CO", "MX", "CN", "IN", "BR",
+               "SA", "KR", "US", "NL", "SE", "DE", "GB", "FI", "JP", "AT")
 cty <- cty |> mutate(lab = ifelse(iso2 %in% label_iso, iso2, NA))
 
 f5 <- ggplot(cty, aes(coverage_pct, oa_pct)) +
   geom_point(aes(fill = income_group, size = articles), shape = 21, colour = "white",
              stroke = 0.4, alpha = 0.9) +
-  geom_text_repel(aes(label = lab), size = 2.6, colour = "grey15", min.segment.length = 0.2,
-                  box.padding = 0.35, seed = 1, na.rm = TRUE) +
+  geom_text_repel(aes(label = lab), size = 2.6, colour = "grey15", min.segment.length = 0,
+                  box.padding = 0.5, point.padding = 0.3, max.overlaps = Inf, seed = 1, na.rm = TRUE) +
   scale_x_continuous(labels = function(x) paste0(x, "%"), limits = c(0, 100),
                      expand = expansion(mult = c(0.02, 0.02))) +
   scale_y_continuous(labels = function(x) paste0(x, "%"), limits = c(0, NA),

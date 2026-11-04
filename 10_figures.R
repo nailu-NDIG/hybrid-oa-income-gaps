@@ -53,7 +53,7 @@ cat("\nFigure 1 counts:", n_elig, n_sample, n_oa, n_j, n_c, n_h, n_fa, "\n")
 boxes <- tibble(
   x = 1, y = 4:1,
   label = c(sprintf("ScholCommLab APC dataset v2\nAPC in ≥2 years, 2019–2024\nn = %s", comma(n_elig)),
-            sprintf("Top 50 by SCImago Journal Rank 2019\namong APC-eligible journals\nin each of 27 subject areas\nn = %s", comma(n_sample)),
+            sprintf("Top 50 by SCImago Journal Rank 2019\namong journals with APC data\nin each of 27 subject areas\nn = %s", comma(n_sample)),
             sprintf("With research articles in OpenAlex: n = %s\nAnalysed: n = %s journals, %s countries\n(excluded: 1 ISSN shared by two journals,\n1 without author country)", comma(n_oa), comma(n_j), n_c),
             sprintf("Hybrid in ≥1 year: n = %s\nwith first-author data (hoaddata): n = %s", comma(n_h), comma(n_fa))))
 srcs <- tibble(
@@ -153,13 +153,13 @@ long4 <- gap |>
   pivot_longer(-c(group, year), names_to = "route", values_to = "pp") |>
   mutate(route = factor(route, c("Without identified eligibility", "With identified eligibility")))
 # net gap: black point at its value
-tot4 <- gap |> mutate(year = factor(year), lab = sprintf("%.1f", 100 * gap_total))
+tot4 <- gap |> mutate(year = factor(year), lab = sub("-", "\u2212", sprintf("%.1f", 100 * gap_total)))
 strip4 <- setNames(ifelse(share$share_reported,
                           sprintf("%s\nidentified eligibility: %s of change",
                                   short[as.character(share$group)], percent(share$share_agreement, 1)),
-                          sprintf("%s\neligible %+.1f pp, other %+.1f pp",
-                                  short[as.character(share$group)], 100 * share$d_gap_agreement,
-                                  100 * share$d_gap_other)),
+                          sprintf("%s\nwith identified eligibility %s pp, without %s pp",
+                                  short[as.character(share$group)], sub("-", "\u2212", sprintf("%+.1f", 100 * share$d_gap_agreement)),
+                                  sub("-", "\u2212", sprintf("%+.1f", 100 * share$d_gap_other)))),
                    share$group)
 
 f4 <- ggplot(long4, aes(year, pp, fill = route)) +
@@ -196,10 +196,10 @@ pick <- function(model, pattern, panel_lab) {
 }
 f6 <- bind_rows(pick("m1", "log_apc", "A. Participation: log APC × income group"),
                 pick("m2", "log_apc", "B. Hybrid OA: log APC × income group"),
-                pick("m4", "ta_journal", "C. Hybrid OA: agreement eligibility in the country-year"),
-                pick("m4_pub", "ta_publisher", "C. Hybrid OA: agreement eligibility in the country-year"),
-                pick("m4_2022", "ta_journal", "C. Hybrid OA: agreement eligibility in the country-year"),
-                pick("m4_lead", "ta_journal_lead", "C. Hybrid OA: agreement eligibility in the country-year")) |>
+                pick("m4", "ta_journal", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
+                pick("m4_pub", "ta_publisher", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
+                pick("m4_2022", "ta_journal", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
+                pick("m4_lead", "ta_journal_lead", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)")) |>
   mutate(label = factor(label, rev(c("Upper-middle", "Lower-middle", "Low", "Journal listed (main)",
                                      "Publisher covered", "Journal listed, 2022-2024",
                                      "Next-year eligibility (lead)"))),
@@ -210,7 +210,7 @@ f_6 <- ggplot(f6, aes(estimate, label, colour = label)) +
   geom_vline(xintercept = 0, colour = "grey40") +
   geom_linerange(aes(xmin = conf.low, xmax = conf.high), linewidth = 0.9) +
   geom_point(size = 2.2) +
-  geom_text(aes(x = 1.15, label = sprintf("%.2f (%.2f-%.2f)", exp(estimate), exp(conf.low), exp(conf.high))),
+  geom_text(aes(x = 1.15, label = sprintf("%.2f (%.2f\u2013%.2f)", exp(estimate), exp(conf.low), exp(conf.high))),
             hjust = 0, size = 2.5, colour = "grey10") +
   facet_wrap(~panel, ncol = 1, scales = "free_y") +
   scale_colour_manual(values = c("Upper-middle" = cols[[2]], "Lower-middle" = cols[[3]], "Low" = cols[[4]]),
