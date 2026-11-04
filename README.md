@@ -14,7 +14,7 @@ All inputs are public. Scripts read and write in `data/` (override with the envi
 | World Bank historical income classification | `OGHIST.xlsx` | `get_data.sh`, from https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups (accessed October 2026) |
 | ScholCommLab APC dataset, version 2 | `scholcommlab_apc_dataset_2019_2025-2.csv` | manual download, Harvard Dataverse, https://doi.org/10.7910/DVN/AZ985C |
 | SCImago Journal Rank 2019, 2023, 2025 | `sjr2019.csv`, `sjr2023.csv`, `sjr2025.csv` | manual export from https://www.scimagojr.com/journalrank.php (all subject areas, journals), accessed October 2026 |
-| OpenAlex extraction | `openalex_country_journal_year.csv`, `openalex_journal_year_totals.csv`, `openalex_log.csv` | `02_extract_openalex.py` (extracted October 2026); archived at [Zenodo DOI] |
+| OpenAlex extraction | `openalex_country_journal_year.csv`, `openalex_journal_year_totals.csv`, `openalex_log.csv` | `02_extract_openalex.py` (extracted October 2026); archived at https://doi.org/10.5281/zenodo.23935789 |
 
 OpenAlex is updated continuously; to reproduce the published results, use the archived extraction and start at step 3.
 
@@ -44,7 +44,7 @@ Python ≥ 3.10 (`requirements.txt`). R 4.5.3 with `fixest` 0.14.2, `readr`, `dp
 
 ## Derived data
 
-The OpenAlex extraction, analysis panels and result tables are archived at [Zenodo DOI] (CC BY 4.0). Copy them into `data/` to run steps 3–13 without re-extracting.
+The OpenAlex extraction, analysis panels and result tables are archived at https://doi.org/10.5281/zenodo.23935789 (CC BY 4.0). Copy them into `data/` to run steps 3–13 without re-extracting.
 
 ## License
 
