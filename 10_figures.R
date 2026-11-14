@@ -216,7 +216,7 @@ f_6 <- ggplot(f6, aes(estimate, label, colour = label)) +
   scale_colour_manual(values = c("Upper-middle" = cols[[2]], "Lower-middle" = cols[[3]], "Low" = cols[[4]]),
                       na.value = ta_col, guide = "none") +
   coord_cartesian(xlim = c(-1, 1.15), clip = "off") +
-  labs(x = "Coefficient (log scale; 95% CI, two-way clustered); right: exponentiated\nA–B: difference in APC slope vs high income (ratio of rate ratios); C: rate ratio", y = NULL) +
+  labs(x = "Coefficient (log scale; 95% CI, two-way clustered); right: exponentiated\n(a)–(b): difference in APC slope vs high income (ratio of rate ratios); (c): rate ratio", y = NULL) +
   theme(strip.text = element_text(hjust = 0, face = "bold"), panel.grid.major.y = element_blank(),
         plot.margin = margin(5.5, 95, 5.5, 5.5))
 save_fig(f_6, "fig6_models", 6.4, 5)
