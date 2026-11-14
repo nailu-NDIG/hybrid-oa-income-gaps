@@ -14,9 +14,10 @@ All inputs are public. Scripts read and write in `data/` (override with the envi
 | World Bank historical income classification | `OGHIST.xlsx` | `get_data.sh`, from https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups (accessed October 2026) |
 | ScholCommLab APC dataset, version 2 | `scholcommlab_apc_dataset_2019_2025-2.csv` | manual download, Harvard Dataverse, https://doi.org/10.7910/DVN/AZ985C |
 | SCImago Journal Rank 2019, 2023, 2025 | `sjr2019.csv`, `sjr2023.csv`, `sjr2025.csv` | manual export from https://www.scimagojr.com/journalrank.php (all subject areas, journals), accessed October 2026 |
-| OpenAlex extraction | `openalex_country_journal_year.csv`, `openalex_journal_year_totals.csv`, `openalex_log.csv` | `02_extract_openalex.py` (extracted October 2026); archived at https://doi.org/10.5281/zenodo.23935789 |
+| OpenAlex extraction | `openalex_country_journal_year.csv`, `openalex_journal_year_totals.csv`, `openalex_log.csv` | `02_extract_openalex.py` (extracted October 2026); archived at https://doi.org/10.5281/zenodo.23935788 |
+| OpenAlex any-OA re-extraction | `anyoa_country_journal_year.csv`, `anyoa_log.csv` | `14_extract_any_oa.py` (extracted November 2026); archived at https://doi.org/10.5281/zenodo.23935788 |
 
-OpenAlex is updated continuously; to reproduce the published results, use the archived extraction and start at step 3.
+OpenAlex is updated continuously. The hybrid OA results use the October 2026 extraction and the any-OA results the November 2026 extraction, which returns 5–6% fewer articles; to reproduce the published results, use the archived extractions and start at step 3 (step 15 for any OA).
 
 ## Pipeline
 
@@ -39,6 +40,7 @@ OpenAlex is updated continuously; to reproduce the published results, use the ar
 | 13 | `13_data_completeness.py` | `completeness_by_year.csv`, `ror_missing_by_income.csv`, `income_filled.csv` |
 | 14 | `14_extract_any_oa.py` | `anyoa_country_journal_year.csv` (OpenAlex re-extraction, November 2026; requires `OPENALEX_API_KEY`; resumable) |
 | 15 | `15_any_oa_descriptives.py` | `any_oa_by_income.csv` (copy in `results/`) |
+| 16 | `16_firstauthor_coaffiliation.py` | `firstauthor_coaffiliation.csv` (copy in `results/`; reads `hoaddata/data/cc_articles.rda`, which needs several GB of memory) |
 
 ## Requirements
 
@@ -46,7 +48,7 @@ Python ≥ 3.10 (`requirements.txt`). R 4.5.3 with `fixest` 0.14.2, `readr`, `dp
 
 ## Derived data
 
-The OpenAlex extraction, analysis panels and result tables are archived at https://doi.org/10.5281/zenodo.23935789 (CC BY 4.0). Copy them into `data/` to run steps 3–13 without re-extracting.
+The OpenAlex extractions, analysis panels and result tables are archived at https://doi.org/10.5281/zenodo.23935788 (CC BY 4.0), including `anyoa_*.csv`, `any_oa_by_income.csv` and `firstauthor_coaffiliation.csv`. Copy them into `data/` to run steps 3–13, 15 and 16 without re-extracting.
 
 ## License
 
@@ -57,3 +59,4 @@ Code: MIT. Derived data: CC BY 4.0.
 - `hoad_common.py` is imported by scripts 05, 06 and 09. First-author counts use the article x first-author affiliation country as unit in numerator and denominator.
 - ISSN-L `1089-5639` is excluded: its ScholCommLab record carries ISSNs of two journals.
 - Shares of the gap change are computed for all groups; `share_reported` is False when the baseline gap is not positive, and the component changes are reported instead, including in sensitivity analyses.
+- The bootstrap in step 5 uses a fixed seed (`numpy.random.default_rng(1)`).
