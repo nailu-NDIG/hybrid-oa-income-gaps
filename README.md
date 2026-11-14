@@ -37,6 +37,8 @@ OpenAlex is updated continuously; to reproduce the published results, use the ar
 | 11 | `11_figure_countries.R` | `country_oa_2024.csv`, `data/figures/fig5_country_oa` |
 | 12 | `12_eligibility_list_coverage.py` | `esac_list_coverage.csv`, `gap_share_agreement_upper.csv` (broad-eligibility scenario) |
 | 13 | `13_data_completeness.py` | `completeness_by_year.csv`, `ror_missing_by_income.csv`, `income_filled.csv` |
+| 14 | `14_extract_any_oa.py` | `anyoa_country_journal_year.csv` (OpenAlex re-extraction, November 2026; requires `OPENALEX_API_KEY`; resumable) |
+| 15 | `15_any_oa_descriptives.py` | `any_oa_by_income.csv` (copy in `results/`) |
 
 ## Requirements
 

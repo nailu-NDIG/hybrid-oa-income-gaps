@@ -191,18 +191,18 @@ pick <- function(model, pattern, panel_lab) {
                              model == "m4" ~ "Journal listed (main)",
                              model == "m4_pub" ~ "Publisher covered",
                              model == "m4_2022" ~ "Journal listed, 2022\u20132024",
-                             term == "ta_journal_lead" ~ "Next-year eligibility (lead)",
+                             term == "ta_journal_lead" ~ "Next-year coverage (lead)",
                              TRUE ~ term))
 }
-f6 <- bind_rows(pick("m1", "log_apc", "A. Participation: log APC × income group"),
-                pick("m2", "log_apc", "B. Hybrid OA: log APC × income group"),
-                pick("m4", "ta_journal", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
-                pick("m4_pub", "ta_publisher", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
-                pick("m4_2022", "ta_journal", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
-                pick("m4_lead", "ta_journal_lead", "C. Hybrid OA: agreement coverage (journal\u2013country\u2013year)")) |>
+f6 <- bind_rows(pick("m1", "log_apc", "(a) Participation: log APC × income group"),
+                pick("m2", "log_apc", "(b) Hybrid OA: log APC × income group"),
+                pick("m4", "ta_journal", "(c) Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
+                pick("m4_pub", "ta_publisher", "(c) Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
+                pick("m4_2022", "ta_journal", "(c) Hybrid OA: agreement coverage (journal\u2013country\u2013year)"),
+                pick("m4_lead", "ta_journal_lead", "(c) Hybrid OA: agreement coverage (journal\u2013country\u2013year)")) |>
   mutate(label = factor(label, rev(c("Upper-middle", "Lower-middle", "Low", "Journal listed (main)",
                                      "Publisher covered", "Journal listed, 2022\u20132024",
-                                     "Next-year eligibility (lead)"))),
+                                     "Next-year coverage (lead)"))),
          ci = sprintf("%.2f (%.2f to %.2f)", estimate, conf.low, conf.high))
 cat("\nFigure 6 (coefficients, 95% CI):\n"); print(f6 |> select(panel, label, ci))
 
