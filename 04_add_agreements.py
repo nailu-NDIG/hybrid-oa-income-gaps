@@ -25,7 +25,10 @@ PUBLISHER_MAP = {
     "Frontiers": "FRONTIERS", "MDPI": "MDPI", "PLOS": "PLOS",
     "Public Library of Science": "PLOS",
 }
+FUZZY = {}  # names resolved by approximate matching, reported in main()
 COUNTRY_OVERRIDES = {
+    # "Congo" is ambiguous in the registry (CG vs CD); no active agreement listing it
+    # covers a sample journal-country-year of either country, so the choice has no effect
     "Chinese Taipei": "TW", "Taiwan": "TW", "Congo": "CG", "Congo (DR)": "CD",
     "Ivory Coast": "CI", "Côte d'Ivoire": "CI", "Kosovo": "XK", "Laos": "LA",
     "Palestine": "PS", "South Korea": "KR", "Czech Republic": "CZ",
@@ -43,7 +46,9 @@ def to_iso2(name):
         return pycountry.countries.lookup(name).alpha_2
     except LookupError:
         try:
-            return pycountry.countries.search_fuzzy(name)[0].alpha_2
+            hit = pycountry.countries.search_fuzzy(name)[0]
+            FUZZY[name] = hit.alpha_2
+            return hit.alpha_2
         except LookupError:
             return None
 
@@ -62,6 +67,8 @@ def main():
             for y in range(max(r.y0, 2019), min(r.y1, 2025) + 1):
                 rows.append((r.id, r.publisher_scl, iso2, y, c))
     acy = pd.DataFrame(rows, columns=["esac_id", "publisher", "iso2", "year", "country_name"])
+    if FUZZY:
+        print("ESAC country names matched approximately:", FUZZY)
     bad = sorted(acy.loc[acy.iso2.isna(), "country_name"].unique())
     if bad:
         print("ESAC country names not mapped:", bad)

@@ -16,8 +16,20 @@ def rda(path):
 
 def agreement_coverage():
     """journal (ISSN-L) x institution (ROR) x active years, from ESAC via jct_data"""
-    inst = pd.read_csv("jct_data/data/jct_inst_all.csv", usecols=["esac_id", "ror_id"]).drop_duplicates()
+    inst = (pd.read_csv("jct_data/data/jct_inst_all.csv", usecols=["esac_id", "ror_id"])
+              .dropna(subset=["ror_id"]).drop_duplicates())  # institutions without ROR cannot be matched
     jn = pd.read_csv("jct_data/data/jct_jn_short.csv", usecols=["esac_id", "issn_l"]).drop_duplicates()
+
+    # a journal can carry a different ISSN-L in hoaddata than in the registry:
+    # also list each agreement journal under all of its ISSNs (journals_eligible.csv)
+    elig = pd.read_csv("journals_eligible.csv", dtype=str)
+    alias = (pd.concat([pd.DataFrame({"jid": elig.issn_l, "k": elig[c]})
+                        for c in ("issn_l", "issn1", "issn2")]).dropna().drop_duplicates())
+    expanded = (jn.merge(alias.drop_duplicates("k"), left_on="issn_l", right_on="k")[["esac_id", "jid"]]
+                  .merge(alias[["jid", "k"]], on="jid")
+                  .rename(columns={"k": "issn_l"})[["esac_id", "issn_l"]])
+    jn = pd.concat([jn, expanded]).drop_duplicates()  # journals outside the list keep their own ISSN-L
+
     esac = pd.read_csv("jct_data/data/esac_df.csv", usecols=["id", "start_date", "end_date"])
     esac["y0"] = pd.to_datetime(esac.start_date).dt.year
     esac["y1"] = pd.to_datetime(esac.end_date).dt.year
@@ -35,6 +47,7 @@ def hoad_counts(return_units=False):
     ta = agreement_coverage()
     cc = rda("hoaddata/data/cc_articles.rda")
     cc = cc[cc.cr_year.between(*YEARS) & cc.country_code.notna()]
+    # articles without ROR keep ta = False; NaN keys would otherwise match NaN keys in merge
     m = cc.merge(ta, left_on=["issn_l", "ror"], right_on=["issn_l", "ror_id"], how="left")
     m["active"] = (m.cr_year >= m.y0) & (m.cr_year <= m.y1)
     dc = (m.groupby(["doi", "country_code"])
